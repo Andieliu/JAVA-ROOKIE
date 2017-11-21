@@ -1,0 +1,154 @@
+import java.util.Scanner;
+
+public class XO {
+	private static int[][]xo = new int[3][3];
+	
+	public final static int EMPTY = 0;
+	public final static int O = 1;
+	public final static int X = 2;   //class variable
+	public static String currentPlayer = "X"; 
+	static int row;
+	static int column;
+	
+	public void putChess(int chess){
+		
+		Scanner input = new Scanner(System.in);
+		System.out.println("                ");
+		System.out.println("player " + currentPlayer + ", please put in your location");
+		
+			do {
+			
+				System.out.println("row: ");
+				row = input.nextInt()-1;
+				
+				System.out.println("column: ");
+				column = input.nextInt()-1;
+			
+			} while (row > xo.length-1 || row < 0||column > xo[row].length-1 || column < 0 || xo[row][column] != EMPTY);
+		
+			xo[row][column] = chess;
+			printBoard();
+					
+//		if(xo[row][column] != EMPTY){
+//			System.out.println("this one is taken, please choose another one");
+//			putChess(chess);
+//		}
+	}
+	
+	public void printBoard(){
+		
+		for(int row = 0; row < 3; row++){
+			for(int column = 0; column < 3; column++)
+				if(xo[row][column] == O){
+					System.out.print(" O |");
+				}else if(xo[row][column] == X){
+					System.out.print(" X |");
+				}else if(xo[row][column] == EMPTY){
+					System.out.print("   |");
+				}
+			
+			System.out.println(" ");
+		}
+	}
+	
+	public int[][] getChessBoard(){
+		return this.xo; 
+	}
+	
+	public void resetChessBoard(){ //all blank spaces are 0 at once
+		for (int[] row:xo){
+			for (int chess:row){
+				chess = EMPTY;
+			}
+		}
+	}
+	
+	public boolean checkRowForWin(int xo[][]) {
+		for(int constant = 0; constant < 3; constant++){
+			if((xo[constant][0] == O && xo[constant][1] == O && xo[constant][2] == O)||((xo[constant][0] == X && xo[constant][1] == X && xo[constant][2] == X))){
+				return true;
+			}
+		}return false;
+	}
+	
+	public boolean checkColumnForWin(int xo[][]) {
+		for(int constant = 0; constant < 3; constant++){
+			if((xo[0][constant] == O && xo[1][constant] == O && xo[2][constant] == O)||((xo[0][constant] == X && xo[1][constant] == X && xo[2][constant] == X))){
+				return true;
+			}
+		}return false;
+	}
+	
+	public boolean checkDiagonalForWin(int xo[][]){
+		if((xo[0][0] == O && xo[2][2] == O && xo[1][1] == O)||(xo[1][1] == X && xo[2][2] == X && xo[0][0] == X)||(xo[2][0] == O && xo[1][1] == O && xo[0][2] == O)||(xo[1][1] == X && xo[0][2] == X && xo[2][0] == X)){
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean win() {
+		return(checkRowForWin(xo)||checkColumnForWin(xo)||checkDiagonalForWin(xo));
+	}
+	
+	public boolean initializePlayer(){
+		
+		if(currentPlayer == "X"){
+			return true;
+			}
+			return false;
+		}
+	
+	public void switchPlayer(){
+		if(currentPlayer == "X"){
+			currentPlayer = "O";
+		}else{
+			currentPlayer = "X";
+		}
+	}
+	
+	public boolean isDraw(){
+		
+		
+		for(column = 0; column < 3; column++){
+			for(row = 0; row < 3; row++){
+				if(xo[row][column] == EMPTY){  //
+					return false; // is not Draw
+				}
+			}
+		}return true; //is Draw
+	}
+	
+	public void drawOrNot(){
+		if(isDraw()){
+			System.out.println("We have a draw ^ 0 ^");
+		}
+		else if(win()){
+			switchPlayer();
+			System.out.println(currentPlayer + " wins!!!");
+		}
+	}
+	
+	public static void main(String args[]){
+		
+		XO Xo = new XO();
+		
+		Xo.resetChessBoard();
+		
+		while(!(Xo.win() && Xo.win() && Xo.isDraw())){		
+			if(Xo.initializePlayer()){
+				Xo.putChess(X);
+				Xo.getChessBoard();
+				Xo.win();
+				Xo.isDraw();
+				Xo.switchPlayer();		
+			}else if(!Xo.initializePlayer()){
+				Xo.putChess(O);
+				Xo.getChessBoard();
+				Xo.win();
+				Xo.isDraw();
+				Xo.switchPlayer();
+			}
+		}
+		Xo.drawOrNot();
+	}
+}
